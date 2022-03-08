@@ -4,9 +4,8 @@ import * as courseActions from "../../redux/actions/courseActions";
 import * as authorActions from "../../redux/actions/authorActions";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
-import CourseList from "./CourseList";
 
-class CoursesPage extends React.Component {
+class ManageCoursePage extends React.Component {
   componentDidMount() {
     const { courses, authors, actions } = this.props;
 
@@ -24,14 +23,13 @@ class CoursesPage extends React.Component {
   render() {
     return (
       <>
-        <h2>Courses</h2>
-        <CourseList courses={this.props.courses} />
+        <h2>Manage Courses</h2>
       </>
     );
   }
 }
 
-CoursesPage.propTypes = {
+ManageCoursePage.propTypes = {
   authors: PropTypes.array.isRequired,
   courses: PropTypes.array.isRequired,
   actions: PropTypes.object.isRequired,
@@ -41,16 +39,7 @@ function mapStateToProps(state) {
   // determines what part of the state we expose to component
   // debugger;
   return {
-    courses:
-      state.authors.length === 0
-        ? []
-        : state.courses.map((course) => {
-            return {
-              ...course,
-              authorName: state.authors.find((a) => a.id === course.authorId)
-                .name,
-            };
-          }),
+    courses: state.courses,
     authors: state.authors,
   };
 }
@@ -65,4 +54,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CoursesPage);
+export default connect(mapStateToProps, mapDispatchToProps)(ManageCoursePage);
