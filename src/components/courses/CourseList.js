@@ -24,7 +24,7 @@ const CourseList = ({ courses }) => (
             </a>
           </td>
           <td>
-            <Link to={"/courses/" + course.slug}>{course.title}</Link>
+            <Link to={"/course/" + course.slug}>{course.title}</Link>
           </td>
           {/* {console.log(course)} */}
           <td>{course.authorName}</td>

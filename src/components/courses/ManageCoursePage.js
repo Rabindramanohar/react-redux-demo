@@ -1,13 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { loadCourses } from "../../redux/actions/courseActions";
+import { loadCourses, saveCourse } from "../../redux/actions/courseActions";
 import { loadAuthors } from "../../redux/actions/authorActions";
 import PropTypes from "prop-types";
+import CourseForm from "./CourseForm";
+import { newCourse } from "../../../tools/mockData";
 
-class ManageCoursePage extends React.Component {
-  componentDidMount() {
-    const { courses, authors, loadAuthors, loadCourses } = this.props;
-
+function ManageCoursePage({
+  courses,
+  authors,
+  loadAuthors,
+  loadCourses,
+  saveCourse,
+  ...props
+}) {
+  const [course, setCourse] = useState({ ...props.course });
+  const [errors, setErrors] = useState({});
+  useEffect(() => {
     if (courses.length === 0) {
       loadCourses().catch((error) => {
         alert("Loading courses failed" + error);
@@ -18,27 +27,46 @@ class ManageCoursePage extends React.Component {
         alert("Loading authors failed: " + error);
       });
     }
+  }, []);
+
+  function handleChange(event) {
+    const { name, value } = event.target;
+    setCourse((preCourse) => ({
+      ...preCourse,
+      [name]: name === "authorId" ? parseInt(value, 10) : value,
+    }));
   }
-  render() {
-    return (
-      <>
-        <h2>Manage Courses</h2>
-      </>
-    );
+
+  function handleSave(event) {
+    event.preventDefault();
+    saveCourse(course);
   }
+
+  return (
+    <CourseForm
+      course={course}
+      authors={authors}
+      errors={errors}
+      onChange={handleChange}
+      onSave={handleSave}
+    />
+  );
 }
 
 ManageCoursePage.propTypes = {
+  course: PropTypes.object.isRequired,
   authors: PropTypes.array.isRequired,
   courses: PropTypes.array.isRequired,
   loadAuthors: PropTypes.func.isRequired,
   loadCourses: PropTypes.func.isRequired,
+  saveCourse: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state) {
   // determines what part of the state we expose to component
   // debugger;
   return {
+    course: newCourse,
     courses: state.courses,
     authors: state.authors,
   };
@@ -48,6 +76,7 @@ const mapDispatchToProps = {
   // determines what actions we expose to component
   loadCourses,
   loadAuthors,
+  saveCourse,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ManageCoursePage);
